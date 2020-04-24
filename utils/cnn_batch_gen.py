@@ -1,9 +1,12 @@
 #!/usr/bin/python2.7
 
-import numpy as np
 import random
-from helper_functions import encode_content
+
+import numpy as np
+
 from base_batch_gen import Base_batch_generator
+from helper_functions import encode_content
+
 
 class CNN_batch_generator(Base_batch_generator):
     
@@ -12,8 +15,8 @@ class CNN_batch_generator(Base_batch_generator):
         self.nRows = nRows
         self.nCols = nCols
         self.actions_dict = actions_dict
-        
-    def read_data(self, list_of_videos):
+
+    def read_data(self, list_of_videos, list_of_fisher_vectors=None):
         for vid in list_of_videos:
             file_ptr = open(vid, 'r') 
             content = file_ptr.read().split('\n')[:-1] 
@@ -36,8 +39,7 @@ class CNN_batch_generator(Base_batch_generator):
     def next_batch(self, batch_size):        
         batch = np.array(self.list_of_examples[self.index:self.index+batch_size])
         self.index += batch_size
-        batch_vid = list(batch[:,0])
-        batch_target = list(batch[:,1])
+        batch_vid = list(batch[:, 0])
+        batch_target = list(batch[:, 1])
         
         return batch_vid, batch_target
-

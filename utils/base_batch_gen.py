@@ -1,5 +1,6 @@
 #!/usr/bin/python2.7
 
+
 class Base_batch_generator(object):
     
     def __init__(self):
@@ -18,7 +19,7 @@ class Base_batch_generator(object):
             return True
         return False
     
-    def read_data(self, list_of_videos):
+    def read_data(self, list_of_videos, list_of_fisher_vectors=None):
         raise NotImplementedError()
     
     def next_batch(self, batch_size):
