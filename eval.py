@@ -104,7 +104,10 @@ for i in range(len(classes)):
     if (n_T[i] + n_F[i]) != 0:
         acc += float(n_T[i]) / (n_T[i] + n_F[i])
         n += 1
-moc = float(acc) / n
+try:
+    moc = float(acc) / n
+except ZeroDivisionError:
+    moc = 0.0
 print "MoC  %.4f" % moc
 
 if args.do_error_analysis:
