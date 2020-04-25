@@ -1,8 +1,9 @@
 #!/usr/bin/python2.7
-
 import os
 
 import numpy as np
+
+from analysis import aggregate_actions_and_lengths
 
 
 def read_mapping_dict(mapping_file):
@@ -95,6 +96,22 @@ def get_label_length_seq(content):
     length_seq.append(len(content)-start)
     
     return label_seq, length_seq
+
+
+def split_multi_label_seq(multi_label_seq):
+    parent_seq, child_seq = [], []
+    for parent_action, child_action in multi_label_seq:
+        parent_seq.append(parent_action)
+        child_seq.append(child_action)
+    return parent_seq, child_seq
+
+
+def get_parent_label_seq(parent_content, child_content):
+    if parent_content is None:
+        return parent_content
+    multi_label_seq, _ = aggregate_actions_and_lengths(list(zip(parent_content, child_content)))
+    parent_seq, _ = split_multi_label_seq(multi_label_seq)
+    return parent_seq
 
 
 def filter_lists(list_of_videos, list_of_fisher_vectors):

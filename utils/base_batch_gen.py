@@ -2,7 +2,6 @@
 
 
 class Base_batch_generator(object):
-    
     def __init__(self):
         self.list_of_examples = []
         self.index = 0
@@ -19,7 +18,7 @@ class Base_batch_generator(object):
             return True
         return False
     
-    def read_data(self, list_of_videos, list_of_fisher_vectors=None):
+    def read_data(self, list_of_videos, list_of_fisher_vectors=None, list_of_parent_videos=None):
         raise NotImplementedError()
     
     def next_batch(self, batch_size):
