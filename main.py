@@ -180,7 +180,7 @@ elif args.action == "predict":  # TODO: Modify this part to work well with paren
                     if args.input_type == "decoded":
                         path += "-noisy"
                     write_predictions(path, f_name, recognition)
-                    if parent_recognition:
+                    if not isinstance(parent_recognition, list):
                         path += '_parent'
                         write_predictions(path, f_name, parent_recognition)
                     unobs_label_seq, unobs_length_seq = get_label_length_seq(unobserved_content[:pred_len])
