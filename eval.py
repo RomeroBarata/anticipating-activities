@@ -9,7 +9,7 @@ import numpy as np
 from utils.analysis import analyse_observations_and_predictions, analyse_full_split_moc
 from utils.analysis import analyse_performance_per_future_action, compute_segmental_edit_score_multiple_videos
 from utils.analysis import overlap_f1_multiple_videos, do_transition_surgery, do_future_surgery
-from utils.analysis import aggregate_actions_and_lengths, extend_or_trim_predicted_actions
+from utils.analysis import aggregate_actions_and_lengths, extend_or_trim_predicted_actions, analyse_per_video_f1_score
 
 
 def read_sequences(filename, ground_truth_path, obs_percentage, substitute_transition=False, substitute_future=False,
@@ -113,6 +113,8 @@ print "MoC  %.4f" % moc
 if args.do_error_analysis:
     analyse_full_split_moc(moc, n_T, n_F, action_to_id=action_to_id, save_path=save_dir)
     analyse_performance_per_future_action(recogs, gts, transition_actions, save_path=save_dir)
+    analyse_per_video_f1_score(gts, recogs, action_to_id=action_to_id, num_classes=len(action_to_id),
+                               overlap=0.50, file_list=filelist, save_path=save_dir)
 seg_edit_score = compute_segmental_edit_score_multiple_videos(gts, recogs)
 for overlap in [0.10, 0.25, 0.50]:
     overlap_f1_score = overlap_f1_multiple_videos(gts, recogs, action_to_id=action_to_id,

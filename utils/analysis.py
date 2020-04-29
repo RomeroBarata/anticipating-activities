@@ -241,6 +241,25 @@ def overlap_f1_multiple_videos(unobserved_actions_per_video, predicted_actions_p
     return np.array(overlap_f1s).mean()
 
 
+def analyse_per_video_f1_score(gts, recogs, action_to_id, num_classes, overlap, file_list, save_path):
+    f1_score_per_video = []
+    for i in range(len(gts)):
+        overlap_f1_score = overlap_f1_multiple_videos(gts[i:i + 1], recogs[i:i + 1], action_to_id=action_to_id,
+                                                      num_classes=num_classes, overlap=overlap)
+        f1_score_per_video.append(overlap_f1_score)
+    f1_score_per_video = np.array(f1_score_per_video)
+    sorting_idx = np.argsort(f1_score_per_video)
+    file_names = np.array([os.path.basename(file_name) for file_name in file_list])
+    file_names = file_names[sorting_idx]
+    f1_score_per_video = f1_score_per_video[sorting_idx]
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    save_file_name = 'metric_f1-' + str(overlap) + '.txt'
+    with open(os.path.join(save_path, save_file_name), mode='w') as f:
+        for file_name, f1_score in zip(file_names, f1_score_per_video):
+            f.write(file_name.ljust(20) + '\t' + str(round(f1_score, 4)) + '\n')
+
+
 def segment_intervals(actions_per_frame):
     actions, lengths = aggregate_actions_and_lengths(actions_per_frame)
     actions_initial_frames = [0] + list(accumulate(lengths))
