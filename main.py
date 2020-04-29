@@ -101,7 +101,7 @@ if args.action == "train":
 ##################
 # Prediction #####
 ##################
-elif args.action == "predict":  # TODO: Modify this part to work well with parent input
+elif args.action == "predict":
     obs_percentages = [.2, .3]
     model_restore_path = args.model_save_path + "/epoch-" + str(args.eval_epoch) + "/model.ckpt"
     if "split1" in args.vid_list_file:
@@ -159,6 +159,8 @@ elif args.action == "predict":  # TODO: Modify this part to work well with paren
                     
                     label_seq, length_seq = get_label_length_seq(observed_content)
                     parent_label_seq = get_parent_label_seq(observed_parent_content, observed_content)
+                    # We need copy of these lists because model.predict modifies them inplace.
+                    obs_parent_label_seq = list(parent_label_seq)
                     obs_label_seq, obs_length_seq = list(label_seq), list(length_seq)
                     num_obs_actions = len(obs_label_seq)
                     with tf.Session() as sess:
@@ -181,12 +183,21 @@ elif args.action == "predict":  # TODO: Modify this part to work well with paren
                         path += "-noisy"
                     write_predictions(path, f_name, recognition)
                     if not isinstance(parent_recognition, list):
-                        path += '_parent'
-                        write_predictions(path, f_name, parent_recognition)
+                        write_predictions(path + '_parent', f_name, parent_recognition)
+                    # Stepwise output. If the model had both coarse and fine as input and output, the stepwise output
+                    # will look like add_milk/grab_milk ...
                     unobs_label_seq, unobs_length_seq = get_label_length_seq(unobserved_content[:pred_len])
-                    # write_step_predictions(path, f_name, obs_label_seq, obs_length_seq, unobs_label_seq,
-                    #                        unobs_length_seq, label_seq[num_obs_actions - 1:],
-                    #                        length_seq[num_obs_actions - 1:])
+                    pred_label_seq = label_seq[num_obs_actions - 1:]
+                    pred_length_seq = length_seq[:num_obs_actions - 1:]
+                    if not isinstance(parent_recognition, list):
+                        obs_label_seq = [pl + '/' + cl for pl, cl in zip(obs_parent_label_seq, obs_label_seq)]
+                        unobs_parent_label_seq = get_parent_label_seq(unobserved_parent_content, unobserved_content)
+                        unobs_label_seq = [pl + '/' + cl for pl, cl in zip(unobs_parent_label_seq, unobs_label_seq)]
+                        pred_label_seq = [pl + '/' + cl
+                                          for pl, cl in zip(parent_label_seq[num_obs_actions - 1:],
+                                                            label_seq[num_obs_actions - 1:])]
+                    write_step_predictions(path + '_stepwise', f_name, obs_label_seq, obs_length_seq, unobs_label_seq,
+                                           unobs_length_seq, pred_label_seq, pred_length_seq)
 
     elif args.model == "cnn":
         if args.fisher_list_file is not None:

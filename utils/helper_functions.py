@@ -62,7 +62,7 @@ def write_step_predictions(path, f_name, obs_label_seq, obs_length_seq, unobs_la
                            pred_label_seq, pred_length_seq):
     if not os.path.exists(path):
         os.makedirs(path)
-    with open(os.path.join(path, f_name + '_stepwise.txt'), mode='w') as f:
+    with open(os.path.join(path, f_name + '.txt'), mode='w') as f:
         f.write('Observed\n')
         for obs_label, obs_length in zip(obs_label_seq, obs_length_seq):
             f.write('\t' + obs_label.ljust(24, ' ') + '\t' + str(obs_length).rjust(4, ' ') + '\n')
