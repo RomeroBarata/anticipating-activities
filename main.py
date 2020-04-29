@@ -188,7 +188,7 @@ elif args.action == "predict":
                     # will look like add_milk/grab_milk ...
                     unobs_label_seq, unobs_length_seq = get_label_length_seq(unobserved_content[:pred_len])
                     pred_label_seq = label_seq[num_obs_actions - 1:]
-                    pred_length_seq = length_seq[:num_obs_actions - 1:]
+                    pred_length_seq = length_seq[num_obs_actions - 1:]
                     if not isinstance(parent_recognition, list):
                         obs_label_seq = [pl + '/' + cl for pl, cl in zip(obs_parent_label_seq, obs_label_seq)]
                         unobs_parent_label_seq = get_parent_label_seq(unobserved_parent_content, unobserved_content)
